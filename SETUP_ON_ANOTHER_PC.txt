@@ -1,0 +1,85 @@
+VEHICLE SERVICE MANAGEMENT - SETUP ON ANOTHER WINDOWS PC
+==========================================================
+
+This guide moves both the project code and its MongoDB data. The GitHub project contains the code, but MongoDB data is stored separately.
+
+1. GET THE PROJECT CODE
+-----------------------
+The public repository is:
+https://github.com/rithish838/Vehicle-Service-Management
+
+Either download the repository as a ZIP using GitHub's Code > Download ZIP button, or use Git from PowerShell:
+
+git clone https://github.com/rithish838/Vehicle-Service-Management.git
+
+Extract/copy the project folder to a location such as C:\Projects\Vehicle-Service-Management.
+
+2. INSTALL PREREQUISITES
+------------------------
+Install:
+- Node.js LTS
+- MongoDB Community Server
+- MongoDB Database Tools (provides mongodump and mongorestore)
+- MongoDB Compass (optional, for viewing the database)
+
+Make sure the MongoDB Windows service is running before starting the app.
+
+3. MOVE THE DATABASE FROM THE ORIGINAL PC
+-----------------------------------------
+On the original laptop, connect the external drive and replace E: below with its actual drive letter. Open PowerShell and run:
+
+mongodump --uri="mongodb://127.0.0.1:27017/vehicle_service_management" --out="E:\VehicleServiceBackup\db"
+
+Copy the VehicleServiceBackup folder to the new PC. Do not put the database dump in a public GitHub repository.
+
+4. RESTORE THE DATABASE ON THE NEW PC
+-------------------------------------
+On the new PC, make sure MongoDB is running, then run in PowerShell (change E: if needed):
+
+mongorestore --uri="mongodb://127.0.0.1:27017" "E:\VehicleServiceBackup\db\vehicle_service_management"
+
+This restores the existing customer accounts, password hashes, vehicles, services, and invoices. If the target database already has data, back it up before restoring to avoid duplicate or conflicting records.
+
+5. CREATE A PRIVATE BACKEND CONFIGURATION
+-----------------------------------------
+The real backend/.env is intentionally not stored in GitHub. From PowerShell:
+
+cd C:\Projects\Vehicle-Service-Management\backend
+Copy-Item .env.example .env
+notepad .env
+
+Set ADMIN_EMAIL, ADMIN_PASSWORD, JWT_SECRET, and MONGODB_URI. Use a new admin password and a random JWT_SECRET of at least 32 characters. The local database URI should normally be:
+
+MONGODB_URI=mongodb://127.0.0.1:27017/vehicle_service_management
+
+The example SMTP settings are placeholders. If email is not being configured yet, remove the SMTP_* lines from .env. To enable booking confirmation emails, replace them with settings and an App Password for a real email account that you control. Never use the normal email account password.
+
+Keep .env private. Do not commit it, paste it into chat, or put it in a public/shared drive.
+
+6. INSTALL DEPENDENCIES AND START THE APP
+-----------------------------------------
+Open one PowerShell terminal and run:
+
+cd C:\Projects\Vehicle-Service-Management\backend
+npm install
+node server.js
+
+Leave that terminal open. Open a second PowerShell terminal and run:
+
+cd C:\Projects\Vehicle-Service-Management\frontend
+npm install
+npm run dev
+
+Open the URL printed by Vite, usually http://localhost:5173/.
+
+7. CHECK MONGODB COMPASS
+------------------------
+In MongoDB Compass on the new PC, connect to:
+
+mongodb://127.0.0.1:27017
+
+Open the vehicle_service_management database. Compass displays the data; the MongoDB Server stores it.
+
+SECURITY REMINDER
+-----------------
+The code is public on GitHub. Keep .env files and database dumps private. Customer sign-in accounts move with the database backup; the admin login is configured in the new PC's .env.
