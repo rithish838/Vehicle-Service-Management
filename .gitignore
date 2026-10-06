@@ -1,0 +1,17 @@
+# Installed dependencies and build output
+**/node_modules/
+frontend/dist/
+**/dist-ssr/
+
+# Local credentials and environment-specific settings
+**/.env
+**/.env.*
+!**/.env.example
+
+# Logs, editor state, and local database exports
+**/*.log
+.vscode/
+.idea/
+.DS_Store
+database/dumps/
+*.archive
