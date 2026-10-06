@@ -47,6 +47,14 @@ npm run dev
 
 Open the URL printed by Vite, usually `http://localhost:5173/`.
 
+## Deploy the frontend to GitHub Pages
+
+The repository includes a GitHub Actions workflow that builds and deploys the React frontend whenever changes are pushed to `main`. In the repository settings, open **Pages** and set the build and deployment source to **GitHub Actions**. The site will be available at:
+
+`https://rithish838.github.io/Vehicle-Service-Management/`
+
+GitHub Pages hosts static files only. The app's login, registration, and data features need the Express API and MongoDB, so they will not work on this frontend-only deployment until the backend is hosted separately and configured with a `VITE_API_URL` build variable. Do not put backend secrets in frontend variables.
+
 ## Database
 
 The MongoDB database is stored separately from the source folder. To move existing records, export on the original computer:
